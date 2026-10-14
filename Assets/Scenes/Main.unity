@@ -341,7 +341,11 @@ MonoBehaviour:
         m_SelectedSource:
           rid: -2
         m_Provider2DCache:
-          rid: -2
+          rid: 2901573025957937260
+    - rid: 2901573025957937260
+      type: {class: 'Provider2DCache`1[[UnityEngine.Rendering.Universal.Light2DProvider, Unity.RenderPipelines.Universal.2D.Runtime]]', ns: UnityEngine.Rendering.Universal, asm: Unity.RenderPipelines.Universal.2D.Runtime}
+      data:
+        m_Cache: []
 --- !u!4 &619394802
 Transform:
   m_ObjectHideFlags: 0
@@ -369,6 +373,7 @@ GameObject:
   - component: {fileID: 800996228}
   - component: {fileID: 800996227}
   - component: {fileID: 800996226}
+  - component: {fileID: 800996230}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -515,6 +520,28 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &800996230
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 800996225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01f8a4788fdf27944bb0bf37aac08626, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  walkSpeed: 4
+  moveForce: 40
+  brakeForce: 20
+  jumpSpeed: 7
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 64
+  groundCheckSize: {x: 0.5, y: 0.1}
+  groundCheckOffset: 0.5
+  isGrounded: 0
 --- !u!1 &1945185216
 GameObject:
   m_ObjectHideFlags: 0

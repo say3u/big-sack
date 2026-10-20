@@ -22,40 +22,52 @@ public class PlayerController : MonoBehaviour {
     public float     groundCheckOffset = 0.5f;
 
     [Header("Respawn")]
-    public float respawnBelowY = -15f;  // fall past this and you go back to the start
+    public float respawnBelowY = -15f;  // safety net: fall past this and you go back to your spawn
 
     public bool isGrounded;
     public bool isBraced;
+    public bool hasCheckpoint;
 
     public System.Action<float> onLanded;   // passes how far below the last ground you landed
     public System.Action        onRespawn;
 
     Rigidbody2D rb;
     Rigidbody2D sack;
-    Vector3 startPos;
-    Vector3 sackStartPos;
+    Vector3 spawnPos;
+    Vector3 sackSpawnOffset;
     float moveInput;
     bool  jumpPressed;
     bool  braceHeld;
     bool  wasGrounded;
     float lastGroundY;
+    float lastJumpTime = -1f;
 
     void Awake () {
         rb = GetComponent<Rigidbody2D>();
         // The sack is whatever the rope joint is tied to
         sack = GetComponent<DistanceJoint2D>().connectedBody;
-        startPos     = transform.position;
-        sackStartPos = sack.transform.position;
-        lastGroundY  = startPos.y;
+        spawnPos        = transform.position;
+        sackSpawnOffset = sack.transform.position - transform.position;
+        lastGroundY     = spawnPos.y;
+    }
+
+    // Called by a Checkpoint when you reach it
+    public void SetCheckpoint (Vector3 pos) {
+        spawnPos        = pos;
+        sackSpawnOffset = new Vector3(-0.8f, 0, 0);  // sack sits next to you on the checkpoint island
+        hasCheckpoint   = true;
     }
 
     public void Respawn () {
-        rb.position   = startPos;
-        sack.position = sackStartPos;
+        transform.position      = spawnPos;
+        sack.transform.position = spawnPos + sackSpawnOffset;
+        rb.position   = spawnPos;
+        sack.position = spawnPos + sackSpawnOffset;
         rb.linearVelocity   = Vector2.zero;
         sack.linearVelocity = Vector2.zero;
-        lastGroundY = startPos.y;
-        wasGrounded = false;
+        // Count it as already grounded so the teleport itself isn't seen as a landing
+        lastGroundY = spawnPos.y;
+        wasGrounded = true;
         onRespawn?.Invoke();
     }
 
@@ -71,10 +83,11 @@ public class PlayerController : MonoBehaviour {
     void FixedUpdate () {
         if (transform.position.y < respawnBelowY) Respawn();
 
-        // Grounded if a small box under our feet touches Ground and we aren't moving up
+        // Grounded if a small box under our feet touches Ground.
+        // Ignored for a moment after jumping so the jump doesn't count as still standing.
         Vector2 feet = (Vector2)transform.position + Vector2.down * groundCheckOffset;
         isGrounded = Physics2D.OverlapBox(feet, groundCheckSize, 0, groundLayer) != null
-                     && rb.linearVelocity.y <= 0.01f;
+                     && Time.time > lastJumpTime + 0.1f;
 
         if (isGrounded && !wasGrounded) onLanded?.Invoke(lastGroundY - transform.position.y);
         if (isGrounded) lastGroundY = transform.position.y;
@@ -109,6 +122,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         rb.linearVelocity = jump;
+        lastJumpTime = Time.time;
     }
 
     void Walk () {

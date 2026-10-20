@@ -27,6 +27,9 @@ public class PlayerController : MonoBehaviour {
     public bool isGrounded;
     public bool isBraced;
 
+    public System.Action<float> onLanded;   // passes how far below the last ground you landed
+    public System.Action        onRespawn;
+
     Rigidbody2D rb;
     Rigidbody2D sack;
     Vector3 startPos;
@@ -34,6 +37,8 @@ public class PlayerController : MonoBehaviour {
     float moveInput;
     bool  jumpPressed;
     bool  braceHeld;
+    bool  wasGrounded;
+    float lastGroundY;
 
     void Awake () {
         rb = GetComponent<Rigidbody2D>();
@@ -41,6 +46,7 @@ public class PlayerController : MonoBehaviour {
         sack = GetComponent<DistanceJoint2D>().connectedBody;
         startPos     = transform.position;
         sackStartPos = sack.transform.position;
+        lastGroundY  = startPos.y;
     }
 
     public void Respawn () {
@@ -48,6 +54,9 @@ public class PlayerController : MonoBehaviour {
         sack.position = sackStartPos;
         rb.linearVelocity   = Vector2.zero;
         sack.linearVelocity = Vector2.zero;
+        lastGroundY = startPos.y;
+        wasGrounded = false;
+        onRespawn?.Invoke();
     }
 
     void Update () {
@@ -66,6 +75,10 @@ public class PlayerController : MonoBehaviour {
         Vector2 feet = (Vector2)transform.position + Vector2.down * groundCheckOffset;
         isGrounded = Physics2D.OverlapBox(feet, groundCheckSize, 0, groundLayer) != null
                      && rb.linearVelocity.y <= 0.01f;
+
+        if (isGrounded && !wasGrounded) onLanded?.Invoke(lastGroundY - transform.position.y);
+        if (isGrounded) lastGroundY = transform.position.y;
+        wasGrounded = isGrounded;
 
         bool jumping = jumpPressed && isGrounded;
         jumpPressed = false;

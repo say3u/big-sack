@@ -21,11 +21,16 @@ public class PlayerController : MonoBehaviour {
     public Vector2   groundCheckSize   = new Vector2(0.5f, 0.1f);
     public float     groundCheckOffset = 0.5f;
 
+    [Header("Respawn")]
+    public float respawnBelowY = -15f;  // fall past this and you go back to the start
+
     public bool isGrounded;
     public bool isBraced;
 
     Rigidbody2D rb;
     Rigidbody2D sack;
+    Vector3 startPos;
+    Vector3 sackStartPos;
     float moveInput;
     bool  jumpPressed;
     bool  braceHeld;
@@ -34,6 +39,15 @@ public class PlayerController : MonoBehaviour {
         rb = GetComponent<Rigidbody2D>();
         // The sack is whatever the rope joint is tied to
         sack = GetComponent<DistanceJoint2D>().connectedBody;
+        startPos     = transform.position;
+        sackStartPos = sack.transform.position;
+    }
+
+    public void Respawn () {
+        rb.position   = startPos;
+        sack.position = sackStartPos;
+        rb.linearVelocity   = Vector2.zero;
+        sack.linearVelocity = Vector2.zero;
     }
 
     void Update () {
@@ -46,6 +60,8 @@ public class PlayerController : MonoBehaviour {
     }
 
     void FixedUpdate () {
+        if (transform.position.y < respawnBelowY) Respawn();
+
         // Grounded if a small box under our feet touches Ground and we aren't moving up
         Vector2 feet = (Vector2)transform.position + Vector2.down * groundCheckOffset;
         isGrounded = Physics2D.OverlapBox(feet, groundCheckSize, 0, groundLayer) != null

@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Jumping")]
     public float jumpSpeed = 7f;
+    public float launchMultiplier = 0.8f;      // how much of the sack's velocity gets added to a jump
+    [Range(0, 1)] public float sackFollow = 0.5f; // on launch, nudge the sack toward our velocity so the rope doesn't snap us right back
 
     [Header("Swinging")]
     public float swingForce    = 25f;  // how hard A/D push the sack while braced
@@ -62,7 +64,22 @@ public class PlayerController : MonoBehaviour {
             Walk();
         }
 
-        if (jumping) rb.linearVelocity = new Vector2(rb.linearVelocity.x, jumpSpeed);
+        if (jumping) Jump();
+    }
+
+    void Jump () {
+        Vector2 jump = new Vector2(rb.linearVelocity.x, jumpSpeed);
+
+        // A swinging sack adds its momentum. Timed on the upswing, this sends you up and across;
+        // timed wrong, the sideways part throws you the wrong way and you get no extra height.
+        if (!sack.IsTouchingLayers(groundLayer)) {
+            Vector2 launch = sack.linearVelocity * launchMultiplier;
+            jump.x += launch.x;
+            jump.y += Mathf.Max(0, launch.y);
+            sack.linearVelocity = Vector2.Lerp(sack.linearVelocity, jump, sackFollow);
+        }
+
+        rb.linearVelocity = jump;
     }
 
     void Walk () {

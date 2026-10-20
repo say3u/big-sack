@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour {
     public bool isGrounded;
     public bool isBraced;
     public bool hasCheckpoint;
+    public bool controlsEnabled = true;  // off on the title and win screens
 
     public System.Action<float> onLanded;   // passes how far below the last ground you landed
     public System.Action        onRespawn;
@@ -74,6 +75,8 @@ public class PlayerController : MonoBehaviour {
     void Update () {
         // Read input every frame so a quick key press isn't missed
         moveInput = 0;
+        braceHeld = false;
+        if (!controlsEnabled) return;
         if (Input.GetKey(KeyCode.A)) moveInput -= 1;
         if (Input.GetKey(KeyCode.D)) moveInput += 1;
         if (Input.GetKeyDown(KeyCode.Space)) jumpPressed = true;
@@ -97,7 +100,8 @@ public class PlayerController : MonoBehaviour {
         jumpPressed = false;
 
         // Bracing plants your feet: the sack can't pull you anywhere while Shift is held
-        isBraced = braceHeld && isGrounded && !jumping;
+        // With controls off (title/win screen) you stay braced so the sack can't drag you away
+        isBraced = (braceHeld || !controlsEnabled) && isGrounded && !jumping;
         rb.constraints = isBraced ? RigidbodyConstraints2D.FreezeAll : RigidbodyConstraints2D.FreezeRotation;
 
         if (isBraced) {

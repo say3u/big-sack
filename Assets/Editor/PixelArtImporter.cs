@@ -21,6 +21,7 @@ public class PixelArtImporter : AssetPostprocessor {
         else if (name == "sack")           importer.spritePixelsPerUnit = 18;
         else if (name.StartsWith("cloud")) importer.spritePixelsPerUnit = 18;
         else if (name == "horizon")        importer.spritePixelsPerUnit = 12;
+        else if (name.StartsWith("tree"))  importer.spritePixelsPerUnit = 18;  // trees are 1 unit wide
         else                               importer.spritePixelsPerUnit = 36;
 
         TextureImporterSettings settings = new TextureImporterSettings();

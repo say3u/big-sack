@@ -6,6 +6,8 @@ public class CrumblingIsland : MonoBehaviour {
     public float crumbleDelay = 1.5f;  // time before it breaks
     public float respawnDelay = 3f;    // time before it comes back
     public Color crackedColor = new Color(0.55f, 0.2f, 0.15f);
+    public AudioClip[] crackSounds;    // when it starts breaking
+    public AudioClip   breakSound;     // when it disappears
 
     SpriteRenderer sr;
     Collider2D     col;
@@ -29,6 +31,7 @@ public class CrumblingIsland : MonoBehaviour {
 
     IEnumerator Crumble () {
         crumbling = true;
+        SoundManager.PlayRandom(crackSounds, 0.6f);
 
         // flicker faster and get darker until it breaks
         float t = 0;
@@ -42,6 +45,7 @@ public class CrumblingIsland : MonoBehaviour {
 
         col.enabled = false;
         sr.enabled  = false;
+        SoundManager.Play(breakSound, 0.8f);
 
         yield return new WaitForSeconds(respawnDelay);
 

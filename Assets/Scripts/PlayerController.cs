@@ -31,6 +31,7 @@ public class PlayerController : MonoBehaviour {
 
     public System.Action<float> onLanded;   // sends how far you dropped
     public System.Action        onRespawn;
+    public System.Action<bool>  onJump;     // true if the sack gave you a launch
 
     Rigidbody2D rb;
     Rigidbody2D sack;
@@ -114,6 +115,7 @@ public class PlayerController : MonoBehaviour {
 
     void Jump () {
         Vector2 jump = new Vector2(rb.linearVelocity.x, jumpSpeed);
+        bool launched = false;
 
         // add the sack's speed to the jump if it's swinging
         // good timing = big launch, bad timing = weak jump or going backwards
@@ -122,10 +124,12 @@ public class PlayerController : MonoBehaviour {
             jump.x += launch.x;
             jump.y += Mathf.Max(0, launch.y);
             sack.linearVelocity = Vector2.Lerp(sack.linearVelocity, jump, sackFollow);
+            launched = launch.magnitude > 3f;  // counts as a launch if the sack added a lot
         }
 
         rb.linearVelocity = jump;
         lastJumpTime = Time.time;
+        onJump?.Invoke(launched);
     }
 
     void Walk () {

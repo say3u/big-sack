@@ -1,5 +1,5 @@
 using UnityEngine;
 
-// Marks a floating island. The sack uses this to know what it's allowed to swing through.
+// Just marks something as an island so the sack knows it can swing through it
 public class Island : MonoBehaviour {
 }

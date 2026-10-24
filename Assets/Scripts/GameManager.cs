@@ -1,12 +1,12 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-// Runs the game: title screen, then the climb (time + falls), then the win screen, then back to the title.
+// Handles the title screen, the timer and falls, and the win screen
 public class GameManager : MonoBehaviour {
     public enum State { Title, Playing, Won }
 
     public PlayerController player;
-    public float fallThreshold = 1.5f;  // landing this much lower than where you were counts as a fall
+    public float fallThreshold = 1.5f;  // landing this much lower counts as a fall
 
     public State state = State.Title;
     public float time;
@@ -55,13 +55,13 @@ public class GameManager : MonoBehaviour {
                 break;
 
             case State.Won:
-                // Reloading the scene resets everything: islands, checkpoints, player
+                // reload the scene to reset everything
                 if (Input.GetKeyDown(KeyCode.Space)) SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
                 break;
         }
     }
 
-    // Start the run after every Update this frame, so the Space that started it isn't also a jump
+    // start in LateUpdate so pressing Space to start doesn't also jump
     void LateUpdate () {
         if (!startQueued) return;
         startQueued = false;
@@ -69,7 +69,7 @@ public class GameManager : MonoBehaviour {
         player.controlsEnabled = true;
     }
 
-    // Called by the Goal
+    // the Goal calls this
     public void Finish () {
         if (state != State.Playing) return;
         state = State.Won;
@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour {
         return $"{minutes}:{seconds:00.00}";
     }
 
-    // Placeholder UI drawn with OnGUI; can be swapped for a Canvas later
+    // simple UI using OnGUI
     void OnGUI () {
         if (hudStyle == null) {
             hudStyle = new GUIStyle(GUI.skin.label) { fontSize = 28, fontStyle = FontStyle.Bold };
@@ -116,7 +116,7 @@ public class GameManager : MonoBehaviour {
             return;
         }
 
-        // Dark overlay behind the title and win text
+        // dark background behind the text
         GUI.color = new Color(0, 0, 0, 0.6f);
         GUI.DrawTexture(new Rect(0, 0, Screen.width, Screen.height), Texture2D.whiteTexture);
         GUI.color = Color.white;

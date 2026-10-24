@@ -1,8 +1,7 @@
 using UnityEngine;
 
-// Islands are solid for the player, but the sack only hits an island from above.
-// While the sack is below an island's top it passes through, so a swing never snags
-// on the sides or underside, but it still lands on top.
+// The sack goes through islands from below but can still land on top
+// so it doesn't get stuck on them when swinging
 [RequireComponent(typeof(Collider2D))]
 public class SackCollision : MonoBehaviour {
     Collider2D sackCol;
@@ -20,7 +19,7 @@ public class SackCollision : MonoBehaviour {
     void FixedUpdate () {
         float sackBottom = sackCol.bounds.min.y;
         foreach (Collider2D island in islandCols) {
-            if (!island.enabled) continue;  // crumbled islands are switched off
+            if (!island.enabled) continue;  // skip broken islands
             bool below = sackBottom < island.bounds.max.y - 0.05f;
             Physics2D.IgnoreCollision(sackCol, island, below);
         }

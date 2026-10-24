@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// The flag on the top island. Touch it to finish the run.
+// Flag at the top. Touching it wins the game
 public class Goal : MonoBehaviour {
     public GameManager stats;
 

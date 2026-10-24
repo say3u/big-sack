@@ -1,7 +1,6 @@
 using UnityEngine;
 
-// The ground at the bottom of the tower. Once you've reached a checkpoint,
-// landing here sends you back to it instead of making you climb from the start.
+// Ground at the bottom. If you have a checkpoint, falling here sends you back to it
 public class GroundFloor : MonoBehaviour {
     void OnCollisionEnter2D (Collision2D coll) {
         PlayerController player = coll.gameObject.GetComponent<PlayerController>();

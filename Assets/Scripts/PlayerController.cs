@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour {
     bool  wasGrounded;
     float lastGroundY;
     float lastJumpTime = -1f;
+    Vector2 platformVelocity;   // speed of the moving island you're standing on
 
     void Awake () {
         rb = GetComponent<Rigidbody2D>();
@@ -89,8 +90,11 @@ public class PlayerController : MonoBehaviour {
 
         // check for ground under the feet (skip right after jumping)
         Vector2 feet = (Vector2)transform.position + Vector2.down * groundCheckOffset;
-        isGrounded = Physics2D.OverlapBox(feet, groundCheckSize, 0, groundLayer) != null
-                     && Time.time > lastJumpTime + 0.1f;
+        Collider2D ground = Physics2D.OverlapBox(feet, groundCheckSize, 0, groundLayer);
+        isGrounded = ground != null && Time.time > lastJumpTime + 0.1f;
+
+        // moving islands have a rigidbody, so use its speed to carry the player along
+        platformVelocity = (isGrounded && ground.attachedRigidbody != null) ? ground.attachedRigidbody.linearVelocity : Vector2.zero;
 
         if (isGrounded && !wasGrounded) onLanded?.Invoke(lastGroundY - transform.position.y);
         if (isGrounded) lastGroundY = transform.position.y;
@@ -102,7 +106,13 @@ public class PlayerController : MonoBehaviour {
         // holding Shift freezes the player so the sack can't pull you
         // also freeze when controls are off
         isBraced = (braceHeld || !controlsEnabled) && isGrounded && !jumping;
-        rb.constraints = isBraced ? RigidbodyConstraints2D.FreezeAll : RigidbodyConstraints2D.FreezeRotation;
+        if (isBraced && platformVelocity != Vector2.zero) {
+            // on a moving island you can't freeze in place, so move with the island instead
+            rb.constraints    = RigidbodyConstraints2D.FreezeRotation;
+            rb.linearVelocity = platformVelocity;
+        } else {
+            rb.constraints = isBraced ? RigidbodyConstraints2D.FreezeAll : RigidbodyConstraints2D.FreezeRotation;
+        }
 
         if (isBraced) {
             Swing();
@@ -114,7 +124,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     void Jump () {
-        Vector2 jump = new Vector2(rb.linearVelocity.x, jumpSpeed);
+        Vector2 jump = new Vector2(rb.linearVelocity.x, jumpSpeed + Mathf.Max(0, platformVelocity.y));
         bool launched = false;
 
         // add the sack's speed to the jump if it's swinging
@@ -134,7 +144,7 @@ public class PlayerController : MonoBehaviour {
 
     void Walk () {
         // use force instead of setting velocity so the sack can still pull you
-        float targetSpeed = moveInput * walkSpeed;
+        float targetSpeed = moveInput * walkSpeed + platformVelocity.x;  // walk relative to a moving island
         float maxForce = (moveInput != 0) ? moveForce : brakeForce;
         if (!isGrounded) maxForce = (moveInput != 0) ? moveForce * 0.3f : 0;  // less control in the air
         float force = (targetSpeed - rb.linearVelocity.x) * rb.mass / Time.fixedDeltaTime;

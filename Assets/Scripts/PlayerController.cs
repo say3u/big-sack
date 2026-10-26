@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour {
     public float walkSpeed  = 4f;
     public float moveForce  = 40f;  // how fast you speed up
     public float brakeForce = 20f;  // how much you slow down when not moving
+    public float platformGrip = 80f; // how well you stick to a moving island
 
     [Header("Jumping")]
     public float jumpSpeed = 7f;
@@ -147,6 +148,7 @@ public class PlayerController : MonoBehaviour {
         float targetSpeed = moveInput * walkSpeed + platformVelocity.x;  // walk relative to a moving island
         float maxForce = (moveInput != 0) ? moveForce : brakeForce;
         if (!isGrounded) maxForce = (moveInput != 0) ? moveForce * 0.3f : 0;  // less control in the air
+        if (platformVelocity != Vector2.zero) maxForce = Mathf.Max(maxForce, platformGrip);  // hold on tighter on moving islands
         float force = (targetSpeed - rb.linearVelocity.x) * rb.mass / Time.fixedDeltaTime;
         rb.AddForce(Vector2.right * Mathf.Clamp(force, -maxForce, maxForce));
     }

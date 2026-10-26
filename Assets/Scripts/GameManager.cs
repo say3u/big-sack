@@ -54,6 +54,7 @@ public class GameManager : MonoBehaviour {
             time += Time.deltaTime;
             ui.SetHUD(time, falls);
             if (Input.GetKeyDown(KeyCode.Escape)) Pause();
+            if (Input.GetKeyDown(KeyCode.R)) BackToCheckpoint();
         } else if (state == State.Paused) {
             if (Input.GetKeyDown(KeyCode.Escape)) Resume();
         }
@@ -84,6 +85,12 @@ public class GameManager : MonoBehaviour {
         Time.timeScale = 1;
         playQueued = true;
         ui.ShowHUD();
+    }
+
+    // for when you get stuck: back to the last checkpoint (or the start). counts as a fall
+    public void BackToCheckpoint () {
+        if (state == State.Paused) Resume();
+        player.Respawn();
     }
 
     // reload the level and start playing right away

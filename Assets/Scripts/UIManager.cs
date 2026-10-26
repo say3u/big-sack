@@ -135,6 +135,10 @@ public class UIManager : MonoBehaviour {
         game.Restart();
     }
 
+    public void OnBackToCheckpoint () {
+        game.BackToCheckpoint();
+    }
+
     public void OnTitle () {
         game.QuitToTitle();
     }

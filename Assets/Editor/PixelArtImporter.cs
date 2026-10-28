@@ -18,10 +18,11 @@ public class PixelArtImporter : AssetPostprocessor {
         // pixels per unit: tiles are 18px = half a unit, characters are 24px = 1 unit
         string name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
         if (name.StartsWith("player"))     importer.spritePixelsPerUnit = 24;
-        else if (name == "sack")           importer.spritePixelsPerUnit = 18;
+        else if (name.StartsWith("sack")) importer.spritePixelsPerUnit = 18;  // sack and tool bag
         else if (name.StartsWith("cloud")) importer.spritePixelsPerUnit = 18;
         else if (name == "horizon")        importer.spritePixelsPerUnit = 12;
         else if (name.StartsWith("tree"))  importer.spritePixelsPerUnit = 18;  // trees are 1 unit wide
+        else if (name.StartsWith("toilet")) importer.spritePixelsPerUnit = 9;   // toilet map is drawn smaller
         else                               importer.spritePixelsPerUnit = 36;
 
         TextureImporterSettings settings = new TextureImporterSettings();
@@ -29,6 +30,7 @@ public class PixelArtImporter : AssetPostprocessor {
         settings.spriteMeshType = SpriteMeshType.FullRect;  // needed for tiled sprites
         // island edges stay the same and the middle repeats
         if (name.StartsWith("island")) settings.spriteBorder = new Vector4(18, 0, 18, 0);
+        if (name.StartsWith("button")) settings.spriteBorder = new Vector4(4, 4, 4, 4);  // menu button corners
         importer.SetTextureSettings(settings);
     }
 }

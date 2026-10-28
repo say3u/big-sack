@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 // Runs the game: title menu, playing, pause, and winning. Keeps the time, falls, and best time.
 public class GameManager : MonoBehaviour {
-    public enum State { Title, Playing, Paused, Won }
+    public enum State { Title, Playing, Paused, Won, Flushing }  // Flushing is for the toilet ending
 
     public PlayerController player;
     public UIManager        ui;
@@ -115,7 +115,7 @@ public class GameManager : MonoBehaviour {
 
     // the Goal calls this
     public void Finish () {
-        if (state != State.Playing) return;
+        if (state != State.Playing && state != State.Flushing) return;  // flushing counts too
         state = State.Won;
         player.controlsEnabled = false;
 

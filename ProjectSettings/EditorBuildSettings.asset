@@ -7,10 +7,7 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/Main.unity
-    guid: 3b0e425a91d162341881b84a05374642
-  - enabled: 1
-    path: Assets/Scenes/ToiletLevel.unity
-    guid: 8fc77eb0589ff469d87356b1e5a5d971
+    guid: e4acbb0beb42d3c488396255016a627e
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

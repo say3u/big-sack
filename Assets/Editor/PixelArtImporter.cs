@@ -17,12 +17,10 @@ public class PixelArtImporter : AssetPostprocessor {
 
         // pixels per unit: tiles are 18px = half a unit, characters are 24px = 1 unit
         string name = System.IO.Path.GetFileNameWithoutExtension(assetPath);
-        if (name.StartsWith("player"))     importer.spritePixelsPerUnit = 24;
-        else if (name.StartsWith("sack")) importer.spritePixelsPerUnit = 18;  // sack and tool bag
-        else if (name.StartsWith("cloud")) importer.spritePixelsPerUnit = 18;
-        else if (name == "horizon")        importer.spritePixelsPerUnit = 12;
-        else if (name.StartsWith("tree"))  importer.spritePixelsPerUnit = 18;  // trees are 1 unit wide
+        if (name.StartsWith("player"))      importer.spritePixelsPerUnit = 24;
+        else if (name.StartsWith("sack"))   importer.spritePixelsPerUnit = 18;  // tool bag
         else if (name.StartsWith("toilet")) importer.spritePixelsPerUnit = 9;   // toilet map is drawn smaller
+        else if (name.StartsWith("duck"))   importer.spritePixelsPerUnit = 9;   // rubber duck is 2 units wide
         else                               importer.spritePixelsPerUnit = 36;
 
         TextureImporterSettings settings = new TextureImporterSettings();

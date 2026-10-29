@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour {
     [Header("Jumping")]
     public float jumpSpeed = 7f;
     public float launchMultiplier = 0.8f;      // how much of the sack's speed gets added to the jump
+    public float maxLaunchSpeed   = 7f;        // most speed the sack can add, so launches don't go crazy high
     [Range(0, 1)] public float sackFollow = 0.5f; // helps the sack follow you on a launch so the rope doesn't yank you back
 
     [Header("Swinging")]
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour {
 
     [Header("Respawn")]
     public float respawnBelowY = -15f;  // respawn if you fall below this
+    public float fallBackDistance = 6f; // respawn if you fall this far below your checkpoint (so a fall in the bowl doesn't drop you down the whole pipe)
 
     public bool isGrounded;
     public bool isBraced;
@@ -36,6 +38,7 @@ public class PlayerController : MonoBehaviour {
 
     Rigidbody2D rb;
     Rigidbody2D sack;
+    DistanceJoint2D rope;
     Vector3 spawnPos;
     Vector3 sackSpawnOffset;
     float moveInput;
@@ -49,7 +52,8 @@ public class PlayerController : MonoBehaviour {
     void Awake () {
         rb = GetComponent<Rigidbody2D>();
         // get the sack from the rope joint
-        sack = GetComponent<DistanceJoint2D>().connectedBody;
+        rope = GetComponent<DistanceJoint2D>();
+        sack = rope.connectedBody;
         spawnPos        = transform.position;
         sackSpawnOffset = sack.transform.position - transform.position;
         lastGroundY     = spawnPos.y;
@@ -88,6 +92,7 @@ public class PlayerController : MonoBehaviour {
 
     void FixedUpdate () {
         if (transform.position.y < respawnBelowY) Respawn();
+        else if (hasCheckpoint && transform.position.y < spawnPos.y - fallBackDistance) Respawn();
 
         // check for ground under the feet (skip right after jumping)
         Vector2 feet = (Vector2)transform.position + Vector2.down * groundCheckOffset;
@@ -131,16 +136,27 @@ public class PlayerController : MonoBehaviour {
         // add the sack's speed to the jump if it's swinging
         // good timing = big launch, bad timing = weak jump or going backwards
         if (!sack.IsTouchingLayers(groundLayer)) {
-            Vector2 launch = sack.linearVelocity * launchMultiplier;
+            Vector2 launch = Vector2.ClampMagnitude(sack.linearVelocity * launchMultiplier, maxLaunchSpeed);
             jump.x += launch.x;
             jump.y += Mathf.Max(0, launch.y);
-            sack.linearVelocity = Vector2.Lerp(sack.linearVelocity, jump, sackFollow);
             launched = launch.magnitude > 3f;  // counts as a launch if the sack added a lot
         }
+
+        // the sack hops up with you too, so it doesn't just drag on the ground and yank you back
+        sack.linearVelocity = Vector2.Lerp(sack.linearVelocity, jump, sackFollow);
 
         rb.linearVelocity = jump;
         lastJumpTime = Time.time;
         onJump?.Invoke(launched);
+    }
+
+    // the rubber duck calls this. works like a jump so bracing doesn't freeze you,
+    // and the sack comes with you so the rope doesn't pull you back down
+    public void Bounce (float speed) {
+        rb.constraints    = RigidbodyConstraints2D.FreezeRotation;
+        rb.linearVelocity = new Vector2(rb.linearVelocity.x, speed);
+        sack.linearVelocity = Vector2.Lerp(sack.linearVelocity, rb.linearVelocity, sackFollow);
+        lastJumpTime = Time.time;
     }
 
     void Walk () {
@@ -153,14 +169,17 @@ public class PlayerController : MonoBehaviour {
         rb.AddForce(Vector2.right * Mathf.Clamp(force, -maxForce, maxForce));
     }
 
+    // A / D push the sack left and right like a pendulum
     void Swing () {
         if (moveInput == 0) return;
 
-        // stop pushing if the sack is already too fast
+        Vector2 push = new Vector2(moveInput, 0);
+        // if the sack is sitting on the ground, lift it a little so it doesn't just scrape
+        if (sack.IsTouchingLayers(groundLayer)) push.y = groundLift;
+
+        // stop pushing if the sack is already going too fast that way
         if (sack.linearVelocity.x * moveInput > maxSwingSpeed) return;
 
-        Vector2 push = Vector2.right * moveInput;
-        if (sack.IsTouchingLayers(groundLayer)) push.y = groundLift;
         sack.AddForce(push * swingForce);
     }
 

@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour {
         hasBest   = PlayerPrefs.HasKey("BestTime");
         bestTime  = PlayerPrefs.GetFloat("BestTime");
         bestFalls = PlayerPrefs.GetInt("BestFalls");
+        AudioListener.volume = PlayerPrefs.GetFloat("Volume", 0.6f);  // saved from the volume slider
     }
 
     void OnEnable () {
@@ -71,6 +72,7 @@ public class GameManager : MonoBehaviour {
         state = State.Playing;
         playQueued = true;
         ui.ShowHUD();
+        ui.ShowBanner("Clear the Clog!");
     }
 
     public void Pause () {
@@ -113,7 +115,7 @@ public class GameManager : MonoBehaviour {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
-    // the Goal calls this
+    // FlushGoal calls this after the flush
     public void Finish () {
         if (state != State.Playing && state != State.Flushing) return;  // flushing counts too
         state = State.Won;

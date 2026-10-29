@@ -1,7 +1,7 @@
 using UnityEngine;
 
 // Rubber duck that bounces whatever lands on it. The sack bounces too, which can yank you around.
-public class BouncyMushroom : MonoBehaviour {
+public class RubberDuck : MonoBehaviour {
     public float     bounceSpeed     = 18f;  // how fast the player gets sent up
     public float     sackBounceSpeed = 12f;
     public AudioClip bounceSound;

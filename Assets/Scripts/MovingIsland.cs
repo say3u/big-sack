@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Island that slides back and forth. Uses a kinematic rigidbody so the player can ride it.
+// Poop that floats back and forth. Uses a kinematic rigidbody so the player can ride it.
 [RequireComponent(typeof(Rigidbody2D))]
 public class MovingIsland : MonoBehaviour {
     public Vector2 move   = new Vector2(1.5f, 0);  // how far it goes each way from the start

@@ -1,9 +1,9 @@
 using System.Collections;
 using UnityEngine;
 
-// Island that breaks after you stand on it, then comes back
+// Poop that crumbles after you stand on it, then comes back
 public class CrumblingIsland : MonoBehaviour {
-    public float crumbleDelay = 1.5f;  // time before it breaks
+    public float crumbleDelay = 3f;    // time before it breaks
     public float respawnDelay = 3f;    // time before it comes back
     public Color crackedColor = new Color(0.55f, 0.2f, 0.15f);
     public AudioClip[] crackSounds;    // when it starts breaking

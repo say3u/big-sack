@@ -38,7 +38,6 @@ public class PlayerController : MonoBehaviour {
 
     Rigidbody2D rb;
     Rigidbody2D sack;
-    DistanceJoint2D rope;
     Vector3 spawnPos;
     Vector3 sackSpawnOffset;
     float moveInput;
@@ -52,8 +51,7 @@ public class PlayerController : MonoBehaviour {
     void Awake () {
         rb = GetComponent<Rigidbody2D>();
         // get the sack from the rope joint
-        rope = GetComponent<DistanceJoint2D>();
-        sack = rope.connectedBody;
+        sack = GetComponent<DistanceJoint2D>().connectedBody;
         spawnPos        = transform.position;
         sackSpawnOffset = sack.transform.position - transform.position;
         lastGroundY     = spawnPos.y;

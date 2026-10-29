@@ -1,6 +1,6 @@
 using UnityEngine;
 
-// Checkpoint flag. If you fall to the ground after touching it you come back here
+// Checkpoint flag. If you fall after touching it you come back here
 public class Checkpoint : MonoBehaviour {
     public Transform      spawnPoint;  // where you respawn
     public SpriteRenderer flag;

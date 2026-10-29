@@ -90,7 +90,7 @@ public class UIManager : MonoBehaviour {
         hintPanel.SetActive(false);
     }
 
-    // big text that fades out, like "Section 2: Sky Gaps"
+    // big text that fades out, like "The Pipe"
     public void ShowBanner (string message) {
         StopAllCoroutines();
         StartCoroutine(Banner(message));

@@ -1,0 +1,54 @@
+Big Sack - Changes from my One-Pager
+David Nguyen
+
+The main idea is still the same as my one-pager. You're tied to a heavy sack with a rope, you
+hold Shift to brace, swing it with A and D, and jump when it swings up to launch yourself. Most
+of what changed is the setting, the level, and the stuff around the main mechanic.
+
+Setting / Story
+My one-pager was a porter climbing floating sky islands with a sack that had an iron ball in it.
+I actually built the sky tower first, but there wasn't really a reason to climb it. So I changed
+it to a sewer cleaner climbing up into a clogged toilet with a heavy tool bag. The poop platforms
+are the clog, and you win by flushing it. It gives the climb a goal and the flush is a way more
+fun ending.
+
+Level
+I still have 3 sections, but now they're The Tunnels (tutorial with hints), The Pipe, and The
+Bowl. The bowl gets harder as you go up. The bottom half shows you one new thing at a time and
+the top half mixes them together. I also added moving poops and rubber ducks that bounce you,
+which weren't in my one-pager. The crumbling islands turned into "worried poops" that crumble
+after 3 seconds and then come back.
+
+Falling
+In my one-pager falling just dropped you to a lower island. That was way too harsh in the bowl
+since you'd fall all the way down the pipe. So I added checkpoint flags. If you fall too far you
+go back to your last flag, and R or the pause menu sends you back if you get stuck.
+
+Mechanics
+- The launch works how I planned (the sack's speed times a multiplier gets added to your jump),
+  but I had to cap it because people were launching way too high.
+- The sack hops up with you when you jump so the rope doesn't yank you back down.
+- I tried making the sack swing all the way over your head but it felt confusing, so I cut it.
+- I was worried about the sack getting stuck on platforms, so now it can go through them from
+  below but still land on top.
+
+Art
+I used Kenney assets for the tiles, flags, and fonts, plus pixel art for the cleaner, tool bag,
+poops, duck, toilet, and buttons. The player only has idle and walk frames instead of all the
+poses I planned, and the background is the inside of the toilet instead of the sky.
+
+Sound
+Still no background music like I planned. I took out the rope creak because it was annoying and
+squeaky, and the sack sounds were distracting. I added tile footsteps, a whoosh for launches, a
+slide whistle for big falls, a boing for ducks, a squish and plop for crumbling poops, and a
+flush at the end. I also added a volume slider.
+
+Extras I added
+Title screen, how to play screen, pause menu, tutorial hints, section banners, and a win screen
+that shows your time, falls, and best time.
+
+AI Use
+The game idea, the one-pager, the toilet theme, and all the playtesting and design calls were
+mine, like cutting the overhead swing, capping the launch, and redoing the bowl when it didn't
+flow. I used Claude to help write and debug the code, set a couple things up in Unity, draw
+the duck, make the sounds, and do the Git commits.
